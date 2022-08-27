@@ -1,0 +1,17 @@
+{
+  "name": "change_dns",
+  "version": "1.0.0",
+  "description": "ganti dns cloudflare",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-schedule": "^2.1.0",
+    "nodejs-cloudflare-ddns-script": "^1.0.3",
+    "nodemon": "^2.0.19"
+  }
+}

@@ -1,0 +1,138 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model absen_autos {
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  users_id    BigInt    @db.UnsignedBigInt
+  waktu_absen DateTime? @db.Timestamp(0)
+  status      Int?
+  lat         String?   @db.VarChar(255)
+  long        String?   @db.VarChar(255)
+  token       String?   @db.VarChar(255)
+  zona_waktu  String?   @db.VarChar(255)
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @db.Timestamp(0)
+  user        users     @relation(fields: [users_id], references: [id])
+
+  @@index([users_id], map: "users")
+}
+
+model access {
+  id                BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  user              BigInt    @db.UnsignedBigInt
+  kelola_akun       Boolean
+  penilaian         Boolean
+  struktur_proses   Boolean
+  pencapaian_tujuan Boolean
+  created_at        DateTime? @db.Timestamp(0)
+  updated_at        DateTime? @db.Timestamp(0)
+
+  @@index([user], map: "foreign_key_acces_user")
+}
+
+model activities {
+  id            BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  id_user       Int
+  user          String    @db.VarChar(255)
+  nama_kegiatan String    @db.VarChar(255)
+  jumlah        Int
+  lat           String?   @db.VarChar(255)
+  long          String?   @db.VarChar(255)
+  created_at    DateTime? @db.Timestamp(0)
+  updated_at    DateTime? @db.Timestamp(0)
+}
+
+model failed_jobs {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  connection String   @db.Text
+  queue      String   @db.Text
+  payload    String   @db.LongText
+  exception  String   @db.LongText
+  failed_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+model kantors {
+  id            BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  nama_kantor   String    @db.VarChar(255)
+  sumber_data   String    @db.VarChar(255)
+  barat         String    @db.VarChar(255)
+  timur         String    @db.VarChar(255)
+  selatan       String    @db.VarChar(255)
+  utara         String    @db.VarChar(255)
+  key_sort_unit String    @db.VarChar(255)
+  zona_waktu    String    @db.VarChar(255)
+  created_at    DateTime? @db.Timestamp(0)
+  updated_at    DateTime? @db.Timestamp(0)
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model password_resets {
+  email      String    @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+
+  @@index([email], map: "password_resets_email_index")
+  @@ignore
+}
+
+model personal_access_tokens {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt    @db.UnsignedBigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?   @db.Text
+  last_used_at   DateTime? @db.Timestamp(0)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model tokens {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model tools {
+  id     BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  tool   String? @db.VarChar(255)
+  status String? @db.VarChar(255)
+}
+
+model users {
+  id                BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
+  id_satker         BigInt        @db.UnsignedBigInt
+  nama              String        @db.VarChar(255)
+  role              String        @db.VarChar(255)
+  foto              String        @db.VarChar(255)
+  email             String        @unique(map: "users_email_unique") @db.VarChar(255)
+  niplama           String?       @unique(map: "nip_lama") @db.VarChar(255)
+  nip               String?       @db.VarChar(255)
+  email_verified_at DateTime?     @db.Timestamp(0)
+  username          String        @db.VarChar(255)
+  password          String        @db.VarChar(255)
+  remember_token    String?       @db.VarChar(100)
+  username_map      String?       @db.VarChar(255)
+  password_map      String?       @db.VarChar(255)
+  imei              String?       @db.VarChar(255)
+  created_at        DateTime?     @db.Timestamp(0)
+  updated_at        DateTime?     @db.Timestamp(0)
+  absen_autos       absen_autos[]
+}

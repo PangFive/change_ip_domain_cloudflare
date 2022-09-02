@@ -1,11 +1,7 @@
 import fernet from "fernet";
 import 'dotenv/config';
 
-const now = (sub=0) => {
-    const now = new Date();
-
-    return new Date(now.setHours(now.getHours() + sub))
-}
+const now = () => new Date();
 
 const dateFormater = (time = new Date()) => {
     let today = new Date(time)
@@ -69,9 +65,35 @@ const toIsoString = (date) => {
         'Z';
 }
 
+const adjustTimeZone = (dateTime) => {
+    
+    let base = new Date(dateTime);
+
+    let adjust = base.getHours() + Number(process.env.ADJUST_TIME)
+
+    return new Date(base.setHours(adjust))
+   
+}
+
+const envTime = (time) => {
+
+    let array = time.split(':');
+    
+    let result = [];
+
+    array.forEach(element => {
+        result.push(Number(element))
+    });
+
+    return result;
+   
+}
+
 export {
     now,
     dateFormater,
     getBearerToken,
-    toIsoString
+    toIsoString,
+    adjustTimeZone,
+    envTime
 }

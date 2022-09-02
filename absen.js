@@ -3,7 +3,7 @@ import JSONBig from 'json-bigint';
 import axios from 'axios';
 import qs from 'qs';
 import 'dotenv/config';
-import {now, dateFormater, getBearerToken, toIsoString} from './helper.js'
+import {now, dateFormater, getBearerToken, toIsoString, adjustTimeZone, envTime} from './helper.js'
 
 const getJobAbsen = async ( timeStart, timeEnd ) => {
     const prisma = new PrismaClient();
@@ -232,7 +232,7 @@ const startJobAbsen = async (jobData) => {
 
         ////////// Absen ///////////
 
-        const checkAbsen = now(+7) >= new Date(waktu_absen);
+        const checkAbsen = adjustTimeZone(now()) >= new Date(waktu_absen);
         if (checkAbsen) {
             const data = {
                 niplama: `${niplama}`,
@@ -276,10 +276,10 @@ const startJobAbsen = async (jobData) => {
 
 const runJobAbsen = async () => {
 
-    let timeStartD = [5,0,0]; // jam, menit, detik
-    let timeEndD = [8,0,0]; // jam, menit, detik
-    let timeStartP = [14,0,0]; // jam, menit, detik
-    let timeEndP = [18,0,0]; // jam, menit, detik
+    let timeStartD = envTime(process.env.S_DATANG); // jam, menit, detik
+    let timeEndD = envTime(process.env.E_DATANG); // jam, menit, detik
+    let timeStartP = envTime(process.env.S_PULANG); // jam, menit, detik
+    let timeEndP = envTime(process.env.E_PULANG); // jam, menit, detik
 
     let isDatang = ( now() >= now().setHours(timeStartD[0],timeStartD[1],timeStartD[2])  && now() <= now().setHours(timeEndD[0],timeEndD[1],timeEndD[2]));
     let isPulang = ( now() >= now().setHours(timeStartP[0],timeStartP[1],timeStartP[2])  && now() <= now().setHours(timeEndP[0],timeEndP[1],timeEndP[2]));
@@ -288,13 +288,13 @@ const runJobAbsen = async () => {
     let timeEnd;
 
     if(isPulang){
-        timeStart = now(+7).setHours(timeStartP[0],timeStartP[1],timeStartP[2]);
-        // timeEnd = now(+7).setHours(timeEndP[0],timeEndP[1],timeEndP[2]);
-        timeEnd = now(+7).setSeconds(60,0)
+        timeStart = adjustTimeZone(now().setHours(timeStartP[0],timeStartP[1],timeStartP[2]));
+        // timeEnd = adjustTimeZone(now().setHours(timeEndP[0],timeEndP[1],timeEndP[2]));
+        timeEnd = adjustTimeZone(now().setSeconds(60,0));
     }else{
-        timeStart = now().setHours(timeStartD[0],timeStartD[1],timeStartD[2]);
-        // timeEnd = now().setHours(timeEndD[0],timeEndD[1],timeEndD[2]);
-        timeEnd = now(+7).setSeconds(60,0)
+        timeStart = adjustTimeZone(now().setHours(timeStartD[0],timeStartD[1],timeStartD[2]));
+        // timeEnd = adjustTimeZone(now().setHours(timeEndD[0],timeEndD[1],timeEndD[2]));
+        timeEnd = adjustTimeZone(now().setSeconds(60,0))
     }
 
     let job = [];
@@ -305,7 +305,7 @@ const runJobAbsen = async () => {
 
     if ( job.length > 0 && ( isDatang || isPulang )) {
         job.forEach(jobData => {
-            if ( now(+7).setSeconds(0,0) >= new Date(jobData.waktu_absen) ) {
+            if ( adjustTimeZone(now().setSeconds(0,0)) >= new Date(jobData.waktu_absen) ) {
                 startJobAbsen(jobData)
             }
         });

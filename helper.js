@@ -1,6 +1,11 @@
 import fernet from "fernet";
+import 'dotenv/config';
 
-const now = () => new Date();
+const now = (sub=0) => {
+    const now = new Date();
+
+    return new Date(now.setHours(now.getHours() + sub))
+}
 
 const dateFormater = (time = new Date()) => {
     let today = new Date(time)

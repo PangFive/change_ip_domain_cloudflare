@@ -297,7 +297,12 @@ const runJobAbsen = async () => {
         timeEnd = now(+7).setSeconds(60,0)
     }
 
-    const job = await getJobAbsen(timeStart, timeEnd)
+    let job = [];
+
+    if(isDatang || isPulang){
+        job = await getJobAbsen(timeStart, timeEnd)
+    }
+
     if ( job.length > 0 && ( isDatang || isPulang )) {
         job.forEach(jobData => {
             if ( now(+7).setSeconds(0,0) >= new Date(jobData.waktu_absen) ) {

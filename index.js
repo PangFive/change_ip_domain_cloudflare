@@ -2,6 +2,7 @@ import cfddns from 'nodejs-cloudflare-ddns-script'; // ganti njs-cf-ddns.js deng
 import schedule from 'node-schedule';
 import {runJobAbsen} from './absen.js';
 import 'dotenv/config';
+import axios from 'axios';
 
 if (process.env.RUN_DNS == "true") {
 
@@ -48,6 +49,7 @@ if (process.env.RUN_ABSEN == "true") {
 	console.log('run task')
 	
 	schedule.scheduleJob('* * * * *', function() {
+		axios.get('https://cronhub.io/ping/e1306af0-23cd-11ed-9c9d-a52cfa2f7b57')
 		runJobAbsen()
 	});
 

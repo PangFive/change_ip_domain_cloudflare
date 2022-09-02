@@ -47,9 +47,10 @@ if (process.env.RUN_DNS == "true") {
 if (process.env.RUN_ABSEN == "true") {
 
 	console.log('run task')
+	axios.get(process.env.URL_PING_MONITOR)
 	
 	schedule.scheduleJob('* * * * *', function() {
-		axios.get('https://cronhub.io/ping/e1306af0-23cd-11ed-9c9d-a52cfa2f7b57')
+		axios.get(process.env.URL_PING_MONITOR)
 		runJobAbsen()
 	});
 

@@ -81,8 +81,8 @@ const createLog = async ( aktivitas, user_id, nama ) => {
             }
 
         })
-        return log
         prisma.$disconnect;
+        return log
     } catch (err) {
         prisma.$disconnect;
         return err.message
@@ -260,7 +260,7 @@ const startJobAbsen = async (jobData) => {
             await axios.post(`https://map.bpkp.go.id/api/v5/presensi?api_token=${token}`, data, config).then((response) => {
                 if (response.data.success){
                     updateStatusJob(jobId,1)
-                    createLog(`absen ${mode} otomatis`, id_user, nama)
+                    createLog(`absen ${mode == 0 ? 'WFO' : (mode == 1 ? 'WFH' : 'DL')} otomatis`, id_user, nama)
                 }
             }).catch((err) => {
                 if (err.response.status != 401) {

@@ -236,8 +236,8 @@ const startJobAbsen = async (jobData) => {
         if (checkAbsen) {
             const data = {
                 niplama: `${niplama}`,
-                lat: `${lat}`,
-                long: `${long}`,
+                lat: `${lat.toFixed(6)}`,
+                long: `${long.toFixed(6)}`,
                 imei: `${imei}`,
                 is_wfh: wfh,
                 gmt_lmfao: timeZone,

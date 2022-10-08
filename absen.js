@@ -6,7 +6,14 @@ import 'dotenv/config';
 import {now, dateFormater, getBearerToken, toIsoString, adjustTimeZone, envTime} from './helper.js'
 
 const getJobAbsen = async ( timeStart, timeEnd ) => {
-    const prisma = new PrismaClient();
+
+    let prisma
+  
+    if (!global.prisma) {
+        global.prisma = new PrismaClient()
+    }
+
+    prisma = global.prisma
 
     try {
         const absen = await prisma.absen_autos.findMany({
@@ -38,10 +45,8 @@ const getJobAbsen = async ( timeStart, timeEnd ) => {
             }
 
         })
-        prisma.$disconnect;
         return JSONBig.parse(JSONBig.stringify(absen));
     } catch (err) {
-        prisma.$disconnect;
         return {message: err.message}
     }
 }
@@ -236,8 +241,8 @@ const startJobAbsen = async (jobData) => {
         if (checkAbsen) {
             const data = {
                 niplama: `${niplama}`,
-                lat: `${lat.toFixed(6)}`,
-                long: `${long.toFixed(6)}`,
+                lat: `${parseFloat(lat).toFixed(6)}`,
+                long: `${parseFloat(long).toFixed(6)}`,
                 imei: `${imei}`,
                 is_wfh: wfh,
                 gmt_lmfao: timeZone,

@@ -159,7 +159,7 @@ const startJobAbsen = async (jobData) => {
         ////////// Kesehatan ///////////
 
         const checkKesehatan = await axios.get(`https://map.bpkp.go.id/api/v3/covid/${niplama}?api_token=${token}&today=true`).then((response)=>{
-            if(Object.keys(response.data.result).length == 0){
+            if(response.data.result == null){
                 return true
             }else{
                 return false

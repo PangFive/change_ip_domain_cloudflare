@@ -99,7 +99,6 @@ const getToken = async (username, password, kelas_user = 0) => {
 
     const config = {
         headers : {
-            'Host' : 'map.bpkp.go.id',
             'User-Agent' : 'okhttp/3.14.9',
             'x-client-id' : 'map_mobile',
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -181,7 +180,6 @@ const startJobAbsen = async (jobData) => {
 
             const config = {
                 headers : {
-                    'Host' : 'map.bpkp.go.id',
                     'User-Agent' : 'okhttp/3.14.9',
                     'x-client-id' : 'map_mobile',
                     'Content-Type': 'application/json'
@@ -221,7 +219,6 @@ const startJobAbsen = async (jobData) => {
 
             const config = {
                 headers : {
-                    'Host' : 'map.bpkp.go.id',
                     'User-Agent' : 'okhttp/3.14.9',
                     'x-client-id' : 'map_mobile',
                     'Content-Type': 'application/json'
@@ -254,7 +251,6 @@ const startJobAbsen = async (jobData) => {
 
             const config = {
                 headers : {
-                    'Host' : 'map.bpkp.go.id',
                     'User-Agent' : 'okhttp/3.14.9',
                     'x-client-id' : 'map_mobile',
                     'Content-Type': 'application/json',

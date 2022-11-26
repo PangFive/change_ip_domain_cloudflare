@@ -106,7 +106,7 @@ const getToken = async (username, password, kelas_user = 0) => {
         }
     }
 
-    const response = await axios.post("https://map.bpkp.go.id/api/v3/login", qs.stringify({username: username, password: password, kelas_user: kelas_user}), config)				
+    const response = await axios.post("https://corsproxy.io/?https://map.bpkp.go.id/api/v3/login", qs.stringify({username: username, password: password, kelas_user: kelas_user}), config)				
 
     return response;
 }
@@ -130,7 +130,7 @@ const startJobAbsen = async (jobData) => {
 
     const checkAUth = async () => {
         
-        return await axios.get(`https://map.bpkp.go.id/api/v1/backlog/aktivitas?api_token=${token}`)
+        return await axios.get(`https://corsproxy.io/?https://map.bpkp.go.id/api/v1/backlog/aktivitas?api_token=${token}`)
             .then((response) => {
                 return true
             }).catch((err) => {
@@ -158,7 +158,7 @@ const startJobAbsen = async (jobData) => {
 
         ////////// Kesehatan ///////////
 
-        const checkKesehatan = await axios.get(`https://map.bpkp.go.id/api/v3/covid/${niplama}?api_token=${token}&today=true`).then((response)=>{
+        const checkKesehatan = await axios.get(`https://corsproxy.io/?https://map.bpkp.go.id/api/v3/covid/${niplama}?api_token=${token}&today=true`).then((response)=>{
             if(response.data.result == null){
                 return true
             }else{
@@ -188,7 +188,7 @@ const startJobAbsen = async (jobData) => {
                 }
             }
 
-            await axios.post(`https://map.bpkp.go.id/api/v3/covid?api_token=${token}`, data, config)
+            await axios.post(`https://corsproxy.io/?https://map.bpkp.go.id/api/v3/covid?api_token=${token}`, data, config)
 
         }
 
@@ -198,7 +198,7 @@ const startJobAbsen = async (jobData) => {
 
         ////////// Aktivitas ///////////
         let lastAktivitas;
-        const checkAktivitas = await axios.get(`https://map.bpkp.go.id/api/v2/kinerjaHarian/${niplama}?start_date=${dateFormater(now().setDate(now().getDate() - 10))}&api_token=${token}`).then((response)=>{
+        const checkAktivitas = await axios.get(`https://corsproxy.io/?https://map.bpkp.go.id/api/v2/kinerjaHarian/${niplama}?start_date=${dateFormater(now().setDate(now().getDate() - 10))}&api_token=${token}`).then((response)=>{
             if(response.data.result.length > 0 && response.data.result[0].tanggal_aktivitas != dateFormater()){
                 lastAktivitas = response.data.result[0];
                 return true
@@ -228,7 +228,7 @@ const startJobAbsen = async (jobData) => {
                 }
             }
 
-            await axios.post(`https://map.bpkp.go.id/api/v2/saveKinerjaHarian?api_token=${token}`, data, config)
+            await axios.post(`https://corsproxy.io/?https://map.bpkp.go.id/api/v2/saveKinerjaHarian?api_token=${token}`, data, config)
         }
 
         ////////// End Aktivitas ///////////
@@ -262,7 +262,7 @@ const startJobAbsen = async (jobData) => {
                 }
             }
 
-            await axios.post(`https://map.bpkp.go.id/api/v5/presensi?api_token=${token}`, data, config).then((response) => {
+            await axios.post(`https://corsproxy.io/?https://map.bpkp.go.id/api/v5/presensi?api_token=${token}`, data, config).then((response) => {
                 if (response.data.success){
                     updateStatusJob(jobId,1)
                     createLog(`absen ${mode == 0 ? 'WFO' : (mode == 1 ? 'WFH' : 'DL')} otomatis`, id_user, nama)

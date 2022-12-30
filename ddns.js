@@ -1,28 +1,4 @@
-// nodejs-cloudflare-ddns-script
-const iis = require('is-in-subnet');
-const fetch = require('node-fetch');
-exports.getV6 = () => {
-	return new Promise((resolve) => {
-		const netInterfaces = require('os').networkInterfaces();
-		const ipv6AddrArray = new Array();
-		const ipv6Regexp =
-			/^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
-		for (const interface in netInterfaces) {
-			const currentInterface = netInterfaces[interface];
-			currentInterface.forEach((addr) => {
-				if (
-					ipv6Regexp.test(addr.address) &&
-					iis.isPrivate(addr.address) == false &&
-					addr.address != '::1'
-				) {
-					ipv6AddrArray.push(addr.address);
-				}
-			});
-		}
-		resolve(ipv6AddrArray);
-	});
-};
-exports.getV4 = (wanIPSite) => {
+export function getV4(wanIPSite) {
 	return new Promise((resolve) => {
 		fetch(wanIPSite || 'https://ipv4.icanhazip.com')
 			.then((res) => res.text())
@@ -30,8 +6,8 @@ exports.getV4 = (wanIPSite) => {
 				resolve(text.toString().replace(/[\r\n]/g, ''));
 			});
 	});
-};
-exports.update = async (option) => {
+}
+export async function update(option) {
 	let config = option;
 	if (config == undefined) {
 		try {
@@ -41,9 +17,6 @@ exports.update = async (option) => {
 		}
 	}
 	let IP;
-	if (config.recordType == 'AAAA') {
-		IP = (await this.getV6())[0];
-	}
 	if (
 		config.recordType == 'A' ||
 		config.recordType == undefined ||
@@ -123,4 +96,4 @@ exports.update = async (option) => {
 	}else {
 		return 'Same IP';
 	}
-};
+}

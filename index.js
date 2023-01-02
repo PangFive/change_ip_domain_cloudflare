@@ -1,8 +1,33 @@
+import express from "express";
 import * as cfddns from './ddns.js'; // ganti njs-cf-ddns.js dengan file yang dibikin
 import schedule from 'node-schedule';
 import {runJobAbsen} from './absen.js';
 import 'dotenv/config';
 import axios from 'axios';
+
+const app = express();
+
+const portApp = process.env.PORT;
+
+app.get('/ippublic', async (req, res) => {
+
+    try {
+
+		const ip = await cfddns.getV4();
+
+        res.json({ip: ip})
+
+    } catch (err) {
+
+        res.json({
+            status: 'error',
+            message: err.message,
+            data: err?.data
+        });
+
+    }
+
+});
 
 if (process.env.RUN_DNS == "true") {
 
@@ -63,3 +88,7 @@ if (process.env.RUN_ABSEN == "true") {
 	});
 
 }
+
+app.listen(portApp, () => {
+    console.log('jalan port ' + portApp);
+})

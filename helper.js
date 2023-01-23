@@ -24,6 +24,14 @@ const dateFormater = (time = new Date()) => {
     return String(today);
 }
 
+function getRandomArbitrary(min, max) {
+    if(min <= max){
+        return Math.random() * (max - min) + min;
+    }else{
+        return Math.random() * (min - max) + max;
+    }
+}
+
 const getBearerToken = () => {
     try {
 
@@ -95,5 +103,6 @@ export {
     getBearerToken,
     toIsoString,
     adjustTimeZone,
-    envTime
+    envTime,
+    getRandomArbitrary
 }

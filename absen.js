@@ -3,7 +3,7 @@ import JSONBig from 'json-bigint';
 import axios from 'axios';
 import qs from 'qs';
 import 'dotenv/config';
-import {now, dateFormater, getBearerToken, toIsoString, adjustTimeZone, envTime} from './helper.js'
+import {now, dateFormater, getRandomArbitrary, getBearerToken, toIsoString, adjustTimeZone, envTime} from './helper.js'
 
 const getJobAbsen = async ( timeStart, timeEnd ) => {
 
@@ -110,7 +110,7 @@ const getToken = async (username, password, kelas_user = 0) => {
     return response;
 }
 
-const startJobAbsen = async (jobData) => {
+const startJobAbsen = async (jobData, isDatang, isPulang) => {
 
     const jobId = jobData.id
     const username = jobData?.user.username_map;
@@ -126,10 +126,11 @@ const startJobAbsen = async (jobData) => {
     const wfh = false;
     const mode = 0;
     let token = jobData?.token;
+    let validToAbsen = true;
 
     const checkAUth = async () => {
         
-        return await axios.get(`https://map.bpkp.go.id/api/v1/backlog/aktivitas?api_token=${token}`)
+        return await axios.get(`https://map.bpkp.go.id/api/v3/kinerja/aktivitas?api_token=${token}`)
             .then((response) => {
                 return true
             }).catch((err) => {
@@ -196,7 +197,7 @@ const startJobAbsen = async (jobData) => {
 
         ////////// Aktivitas ///////////
         let lastAktivitas;
-        const checkAktivitas = await axios.get(`https://map.bpkp.go.id/api/v2/kinerjaHarian/${niplama}?start_date=${dateFormater(now().setDate(now().getDate() - 10))}&api_token=${token}`).then((response)=>{
+        const checkAktivitas = await axios.get(`https://map.bpkp.go.id/api/v3/kinerja/aktivitas?niplama=${niplama}&tanggal_awal=${dateFormater(now().setDate(now().getDate() - 10))}&api_token=${token}`).then((response)=>{
             if(response.data.result.length > 0 && response.data.result[0].tanggal_aktivitas != dateFormater()){
                 lastAktivitas = response.data.result[0];
                 return true
@@ -211,10 +212,10 @@ const startJobAbsen = async (jobData) => {
             const data = {
                 nama_aktivitas: `${lastAktivitas.nama_aktivitas}`,
                 tanggal_aktivitas:`${dateFormater()}`,
-                id_sasaran: Number(lastAktivitas.id_sasaran),
-                id_sub_sasaran: Number(lastAktivitas.id_sub_sasaran),
-                lat: `${lat}`,
-                long: `${long}`,
+                id_penugasan: Number(lastAktivitas.id_penugasan),
+                lat: Number(parseFloat(lat).toFixed(6)),
+                long: Number(parseFloat(long).toFixed(6)),
+                is_lembur: lastAktivitas.is_lembur,
             };
 
             const config = {
@@ -225,21 +226,45 @@ const startJobAbsen = async (jobData) => {
                 }
             }
 
-            await axios.post(`https://map.bpkp.go.id/api/v2/saveKinerjaHarian?api_token=${token}`, data, config)
+            await axios.post(`https://map.bpkp.go.id/api/v3/kinerja/aktivitas?api_token=${token}`, data, config)
         }
 
         ////////// End Aktivitas ///////////
 
         /////////////////////////////////////////////////////////////////////////////////////////////
 
+        ////////// Check Before Absen //////////
+
+        if (process.env.CHECK_ABSEN == "true") {
+
+            validToAbsen = await axios.get(`https://map.bpkp.go.id/api/v4/presensi?api_token=${token}&niplama=${niplama}&tanggal_awal=${dateFormater()}`)
+                .then((response) => {
+                    let dataRes = response.data.result[0];
+                    if (dataRes.datang.jam === null && isDatang) {
+                        return true
+                    } else if (dataRes.pulang.jam === null && isPulang) {
+                        return true
+                    } else {
+                        return false
+                    }
+                })
+                .catch((err) => {
+                    return false
+                })
+
+        }
+
         ////////// Absen ///////////
 
         const checkAbsen = adjustTimeZone(now()) >= new Date(waktu_absen);
-        if (checkAbsen) {
+        if (checkAbsen && validToAbsen) {
             const data = {
+                perangkat: "android",
+                altitude: getRandomArbitrary(10,20),
+                accuracy: getRandomArbitrary(8,31),
                 niplama: `${niplama}`,
-                lat: `${parseFloat(lat).toFixed(6)}`,
-                long: `${parseFloat(long).toFixed(6)}`,
+                lat: Number(parseFloat(lat).toFixed(6)),
+                long: Number(parseFloat(long).toFixed(6)),
                 imei: `${imei}`,
                 is_wfh: wfh,
                 gmt_lmfao: timeZone,
@@ -254,12 +279,11 @@ const startJobAbsen = async (jobData) => {
                     'User-Agent' : 'okhttp/3.14.9',
                     'x-client-id' : 'map_mobile',
                     'Content-Type': 'application/json',
-                    'Authorization' : `Bearer ${getBearerToken()}`
                 }
             }
 
-            await axios.post(`https://map.bpkp.go.id/api/v5/presensi?api_token=${token}`, data, config).then((response) => {
-                if (response.data.success){
+            await axios.post(`https://map.bpkp.go.id/api/v6/presensi?api_token=${token}`, data, config).then((response) => {
+                if (response.data.status == 'success'){
                     updateStatusJob(jobId,1)
                     createLog(`absen ${mode == 0 ? 'WFO' : (mode == 1 ? 'WFH' : 'DL')} otomatis`, id_user, nama)
                 }
@@ -304,10 +328,11 @@ const runJobAbsen = async () => {
         job = await getJobAbsen(timeStart, timeEnd)
     }
 
+
     if ( job.length > 0 && ( isDatang || isPulang )) {
         job.forEach(jobData => {
             if ( adjustTimeZone(now().setSeconds(0,0)) >= new Date(jobData.waktu_absen) ) {
-                startJobAbsen(jobData)
+                startJobAbsen(jobData, isDatang, isPulang)
             }
         });
     }

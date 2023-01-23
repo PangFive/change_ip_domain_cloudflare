@@ -1,25 +1,169 @@
-import express from "express";
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
 import * as cfddns from './ddns.js'; // ganti njs-cf-ddns.js dengan file yang dibikin
 import schedule from 'node-schedule';
 import {runJobAbsen} from './absen.js';
 import 'dotenv/config';
+import qs from "qs";
 import axios from 'axios';
 
-const app = express();
+const fastify = Fastify({
+    logger: false
+})
+
+await fastify.register(cors, { 
+    origin: '*'
+})
+
 
 const portApp = process.env.PORT;
 
-app.get('/ippublic', async (req, res) => {
+fastify.get('/ippublic', async (req, res) => {
 
     try {
 
 		const ip = await cfddns.getV4();
 
-        res.json({ip: ip})
+        res.send({ip: ip})
 
     } catch (err) {
 
-        res.json({
+        res.send({
+            status: 'error',
+            message: err.message,
+            data: err?.data
+        });
+
+    }
+
+});
+
+fastify.get('/proxy', async function (req, res) {
+
+    let url = decodeURIComponent(qs.stringify(req.query));
+
+    axios.baseUrl = baseUrl;
+
+    let config = {
+        headers : {
+            'Host' : 'map.bpkp.go.id',
+            'User-Agent' : 'okhttp/3.14.9',
+        }
+    }
+
+    if (req.headers["content-type"] != undefined) {
+        config.headers['Content-Type'] = req.headers["content-type"]
+    }
+    
+    if (req.headers["authorization"] != undefined) {
+        config.headers['Authorization'] = req.headers["authorization"]
+    }
+    
+    if (req.headers["x-client-id"] != undefined) {
+        config.headers['x-client-id'] = req.headers["x-client-id"]
+    }
+
+    try {
+
+        await axios.get(url,config).then((response)=>{
+    
+            res.statusCode = response.status;
+            let data = response.data;
+            res.send({...data});
+        })
+
+    } catch (err) {
+        res.statusCode = err.response.status;
+        res.send({
+            status: 'error',
+            message: err.message,
+            data: err?.data
+        });
+
+    }
+})
+
+fastify.post('/proxy', async (req, res) => {
+
+    let url = decodeURIComponent(qs.stringify(req.query));
+  
+    let config = {
+        headers : {
+            'Host' : 'map.bpkp.go.id',
+            'User-Agent' : 'okhttp/3.14.9',
+        }
+    }
+
+    if (req.headers["content-type"] != undefined) {
+        config.headers['Accept'] = req.headers["content-type"]
+        config.headers['Content-Type'] = req.headers["content-type"]
+    }
+    
+    if (req.headers["authorization"] != undefined) {
+        config.headers['Authorization'] = req.headers["authorization"]
+    }
+    
+    if (req.headers["x-client-id"] != undefined) {
+        config.headers['x-client-id'] = req.headers["x-client-id"]
+    }
+	
+    try {
+        
+        await axios.post(url, req.body ,config).then((response)=>{
+    
+            res.statusCode = response.status;
+            let data = response.data;
+            res.send({...data});
+        })
+
+    } catch (err) {
+        res.statusCode = err.response.status;
+        res.send({
+            status: 'error',
+            message: err.message,
+            data: err?.data
+        });
+
+    }
+
+});
+
+fastify.put('/proxy', async (req, res) => {
+
+    let url = decodeURIComponent(qs.stringify(req.query));
+  
+    let config = {
+        headers : {
+            'Host' : 'map.bpkp.go.id',
+            'User-Agent' : 'okhttp/3.14.9',
+        }
+    }
+
+    if (req.headers["content-type"] != undefined) {
+        config.headers['Accept'] = req.headers["content-type"]
+        config.headers['Content-Type'] = req.headers["content-type"]
+    }
+    
+    if (req.headers["authorization"] != undefined) {
+        config.headers['Authorization'] = req.headers["authorization"]
+    }
+    
+    if (req.headers["x-client-id"] != undefined) {
+        config.headers['x-client-id'] = req.headers["x-client-id"]
+    }
+	
+    try {
+        
+        await axios.put(url, req.body ,config).then((response)=>{
+    
+            res.statusCode = response.status;
+            let data = response.data;
+            res.send({...data});
+        })
+
+    } catch (err) {
+        res.statusCode = err.response.status;
+        res.send({
             status: 'error',
             message: err.message,
             data: err?.data
@@ -89,6 +233,11 @@ if (process.env.RUN_ABSEN == "true") {
 
 }
 
-app.listen(portApp, () => {
-    console.log('jalan port ' + portApp);
+// Run the server!
+fastify.listen({ port: portApp }, function (err, address) {
+	console.log('jalan port ' + portApp);
+    if (err) {
+        fastify.log.error(err)
+        process.exit(1)
+    }
 })

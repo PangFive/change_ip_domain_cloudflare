@@ -237,7 +237,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
 
         if (process.env.CHECK_ABSEN == "true") {
 
-            validToAbsen = await axios.get(`https://map.bpkp.go.id/api/v4/presensi?api_token=${token}&niplama=${niplama}&tanggal_awal=${dateFormater()}`)
+            validToAbsen = await axios.get(`https://map.bpkp.go.id/api/v6/presensi?api_token=${token}&niplama=${niplama}&tanggal_awal=${dateFormater()}`)
                 .then((response) => {
                     let dataRes = response.data.result[0];
                     if (dataRes.datang.jam === null && isDatang) {

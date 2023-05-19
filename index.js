@@ -86,7 +86,7 @@ fastify.get("/proxy", async function (req, res) {
         "t1e2KhzoIed59PBnmGf7rli6EQlvjUOMvDvOMIpj0nB94YOoT9WKk5oBgsxjrwMh",
     },
   };
-
+  console.log("jalan");
   axios
     .request(options)
     .then(function (response) {

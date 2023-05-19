@@ -78,12 +78,12 @@ fastify.get("/proxy", async function (req, res) {
   //   }
   const options = { method: "GET" };
 
-  fetch(
+  await fetch(
     "https://map.bpkp.go.id/api/v6/presensi?niplama=201800378&tanggal_awal=2023-05-10&api_token=t1e2KhzoIed59PBnmGf7rli6EQlvjUOMvDvOMIpj0nB94YOoT9WKk5oBgsxjrwMh",
     options
   )
     .then((response) => response.json())
-    .then((response) => console.log(response))
+    .then((response) => res.send({ response }))
     .catch((err) => console.error(err));
 });
 

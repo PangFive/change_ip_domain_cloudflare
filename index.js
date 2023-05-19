@@ -36,10 +36,12 @@ fastify.get("/ippublic", async (req, res) => {
 
 fastify.get("/proxy", async function (req, res) {
   let url = decodeURIComponent(qs.stringify(req.query));
+  if (!url.includes("?") && url.slice(-1) == "=") {
+    url = url.replace("=", "");
+  }
 
   let config = {
     headers: {
-      Host: "map.bpkp.go.id",
       "User-Agent": "okhttp/3.14.9",
     },
   };
@@ -54,6 +56,10 @@ fastify.get("/proxy", async function (req, res) {
 
   if (req.headers["x-client-id"] != undefined) {
     config.headers["x-client-id"] = req.headers["x-client-id"];
+  }
+
+  if (req.headers["x-api-key"] != undefined) {
+    config.headers["x-api-key"] = req.headers["x-api-key"];
   }
 
   try {
@@ -81,7 +87,6 @@ fastify.post("/proxy", async (req, res) => {
 
   let config = {
     headers: {
-      Host: "map.bpkp.go.id",
       "User-Agent": "okhttp/3.14.9",
     },
   };
@@ -121,10 +126,12 @@ fastify.post("/proxy", async (req, res) => {
 
 fastify.put("/proxy", async (req, res) => {
   let url = decodeURIComponent(qs.stringify(req.query));
+  if (!url.includes("?") && url.slice(-1) == "=") {
+    url = url.replace("=", "");
+  }
 
   let config = {
     headers: {
-      Host: "map.bpkp.go.id",
       "User-Agent": "okhttp/3.14.9",
     },
   };

@@ -76,26 +76,15 @@ fastify.get("/proxy", async function (req, res) {
   //       data: err?.data,
   //     });
   //   }
-  const options = {
-    method: "GET",
-    url: "https://map.bpkp.go.id/api/v6/presensi",
-    params: {
-      niplama: "201800378",
-      tanggal_awal: "2023-05-10",
-      api_token:
-        "t1e2KhzoIed59PBnmGf7rli6EQlvjUOMvDvOMIpj0nB94YOoT9WKk5oBgsxjrwMh",
-    },
-  };
-  console.log("jalan");
-  axios
-    .request(options)
-    .then(function (response) {
-      console.log(response.data);
-      res.send({ ...response.data });
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
+  const options = { method: "GET" };
+
+  fetch(
+    "https://map.bpkp.go.id/api/v6/presensi?niplama=201800378&tanggal_awal=2023-05-10&api_token=t1e2KhzoIed59PBnmGf7rli6EQlvjUOMvDvOMIpj0nB94YOoT9WKk5oBgsxjrwMh",
+    options
+  )
+    .then((response) => response.json())
+    .then((response) => console.log(response))
+    .catch((err) => console.error(err));
 });
 
 fastify.post("/proxy", async (req, res) => {

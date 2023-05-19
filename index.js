@@ -35,47 +35,67 @@ fastify.get("/ippublic", async (req, res) => {
 });
 
 fastify.get("/proxy", async function (req, res) {
-  let url = decodeURIComponent(qs.stringify(req.query));
-  if (!url.includes("?") && url.slice(-1) == "=") {
-    url = url.replace("=", "");
-  }
+  //   let url = decodeURIComponent(qs.stringify(req.query));
+  //   if (!url.includes("?") && url.slice(-1) == "=") {
+  //     url = url.replace("=", "");
+  //   }
 
-  let config = {
-    headers: {
-      "User-Agent": "okhttp/3.14.9",
+  //   let config = {
+  //     headers: {
+  //       "User-Agent": "okhttp/3.14.9",
+  //     },
+  //   };
+
+  //   if (req.headers["content-type"] != undefined) {
+  //     config.headers["Content-Type"] = req.headers["content-type"];
+  //   }
+
+  //   if (req.headers["authorization"] != undefined) {
+  //     config.headers["Authorization"] = req.headers["authorization"];
+  //   }
+
+  //   if (req.headers["x-client-id"] != undefined) {
+  //     config.headers["x-client-id"] = req.headers["x-client-id"];
+  //   }
+
+  //   if (req.headers["x-api-key"] != undefined) {
+  //     config.headers["x-api-key"] = req.headers["x-api-key"];
+  //   }
+
+  //   try {
+  //     await axios.get(url, config).then((response) => {
+  //       res.statusCode = response.status;
+  //       let data = response.data;
+  //       res.send({ ...data });
+  //     });
+  //   } catch (err) {
+  //     res.statusCode = err.response.status;
+  //     res.send({
+  //       status: "error",
+  //       message: err.message,
+  //       data: err?.data,
+  //     });
+  //   }
+  const options = {
+    method: "GET",
+    url: "https://pamungkas.agrivan.space/proxy",
+    params: {
+      "https://map.bpkp.go.id/api/v6/presensi?niplama": "201800378",
+      tanggal_awal: "2023-05-10",
+      api_token:
+        "t1e2KhzoIed59PBnmGf7rli6EQlvjUOMvDvOMIpj0nB94YOoT9WKk5oBgsxjrwMh",
     },
+    headers: { accept: "*/*", "x-api-key": "ch_61c4ca7770bb50.16673354" },
   };
 
-  if (req.headers["content-type"] != undefined) {
-    config.headers["Content-Type"] = req.headers["content-type"];
-  }
-
-  if (req.headers["authorization"] != undefined) {
-    config.headers["Authorization"] = req.headers["authorization"];
-  }
-
-  if (req.headers["x-client-id"] != undefined) {
-    config.headers["x-client-id"] = req.headers["x-client-id"];
-  }
-
-  if (req.headers["x-api-key"] != undefined) {
-    config.headers["x-api-key"] = req.headers["x-api-key"];
-  }
-
-  try {
-    await axios.get(url, config).then((response) => {
-      res.statusCode = response.status;
-      let data = response.data;
-      res.send({ ...data });
+  axios
+    .request(options)
+    .then(function (response) {
+      console.log(response.data);
+    })
+    .catch(function (error) {
+      console.error(error);
     });
-  } catch (err) {
-    res.statusCode = err.response.status;
-    res.send({
-      status: "error",
-      message: err.message,
-      data: err?.data,
-    });
-  }
 });
 
 fastify.post("/proxy", async (req, res) => {

@@ -78,20 +78,20 @@ fastify.get("/proxy", async function (req, res) {
   //   }
   const options = {
     method: "GET",
-    url: "https://pamungkas.agrivan.space/proxy",
+    url: "https://map.bpkp.go.id/api/v6/presensi",
     params: {
-      "https://map.bpkp.go.id/api/v6/presensi?niplama": "201800378",
+      niplama: "201800378",
       tanggal_awal: "2023-05-10",
       api_token:
         "t1e2KhzoIed59PBnmGf7rli6EQlvjUOMvDvOMIpj0nB94YOoT9WKk5oBgsxjrwMh",
     },
-    headers: { accept: "*/*", "x-api-key": "ch_61c4ca7770bb50.16673354" },
   };
 
   axios
     .request(options)
     .then(function (response) {
-      res.send("{ ...response.data }");
+      // console.log(response.data);
+      res.send({ ...response.data });
     })
     .catch(function (error) {
       console.error(error);

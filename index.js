@@ -165,6 +165,12 @@ fastify.put("/proxy", async (req, res) => {
   }
 });
 
+const pingCron = async () => {
+  try {
+    axios.get(process.env.URL_PING_MONITOR);
+  } catch (err) {}
+};
+
 if (process.env.RUN_DNS == "true") {
   const options = {
     wanIPv4Site: process.env.wanIPv4Site,
@@ -214,10 +220,10 @@ if (process.env.RUN_DNS == "true") {
 
 if (process.env.RUN_ABSEN == "true") {
   console.log("run task");
-  axios.get(process.env.URL_PING_MONITOR);
+  pingCron();
 
   schedule.scheduleJob("* * * * *", function () {
-    axios.get(process.env.URL_PING_MONITOR);
+    pingCron();
     runJobAbsen();
   });
 }

@@ -7,7 +7,7 @@ import "dotenv/config";
 import qs from "qs";
 import axios from "axios";
 import formbody from "@fastify/formbody";
-import { setEnvValue, now } from "./helper.js";
+import { setEnvValue, now, getEnvValue } from "./helper.js";
 
 const fastify = Fastify({
   logger: false,
@@ -36,7 +36,7 @@ fastify.get("/ippublic", async (req, res) => {
 });
 
 fastify.get("/lastping", async function (req, res) {
-  let lastping = process.env.LAST_RUN;
+  var lastping = getEnvValue("LAST_RUN");
   res.send({ lastping });
 });
 

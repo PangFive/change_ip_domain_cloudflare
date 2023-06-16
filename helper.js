@@ -23,6 +23,20 @@ const setEnvValue = (key, value) => {
   fs.writeFileSync("./.env", ENV_VARS.join(os.EOL));
 };
 
+const getEnvValue = (key) => {
+  const ENV_VARS = fs.readFileSync("./.env", "utf8").split(os.EOL);
+
+  const target = ENV_VARS.indexOf(
+    ENV_VARS.find((line) => {
+      return line.match(new RegExp(key));
+    })
+  );
+
+  // replace the key/value with the new value
+  // ENV_VARS.splice(target, 1, `${key}=${value}`);
+  return ENV_VARS[target].split("=")[1];
+};
+
 const dateFormater = (time = new Date()) => {
   let today = new Date(time);
 
@@ -128,4 +142,5 @@ export {
   envTime,
   getRandomArbitrary,
   setEnvValue,
+  getEnvValue,
 };

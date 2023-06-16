@@ -7,6 +7,7 @@ import "dotenv/config";
 import qs from "qs";
 import axios from "axios";
 import formbody from "@fastify/formbody";
+import { setEnvValue, now } from "./helper.js";
 
 const fastify = Fastify({
   logger: false,
@@ -34,7 +35,12 @@ fastify.get("/ippublic", async (req, res) => {
   }
 });
 
-fastify.get("/proxy", async function (req, res) {
+fastify.get("/lastping", async function (req, res) {
+  let lastping = process.env.LAST_RUN;
+  res.send({ lastping });
+});
+
+fastify.get("/cors", async function (req, res) {
   let url = decodeURIComponent(qs.stringify(req.query));
   if (!url.includes("?") && url.slice(-1) == "=") {
     url = url.replace("=", "");
@@ -78,7 +84,7 @@ fastify.get("/proxy", async function (req, res) {
   }
 });
 
-fastify.post("/proxy", async (req, res) => {
+fastify.post("/cors", async (req, res) => {
   let url = decodeURIComponent(qs.stringify(req.query));
   if (!url.includes("?") && url.slice(-1) == "=") {
     url = url.replace("=", "");
@@ -124,7 +130,7 @@ fastify.post("/proxy", async (req, res) => {
   }
 });
 
-fastify.put("/proxy", async (req, res) => {
+fastify.put("/cors", async (req, res) => {
   let url = decodeURIComponent(qs.stringify(req.query));
   if (!url.includes("?") && url.slice(-1) == "=") {
     url = url.replace("=", "");
@@ -219,11 +225,11 @@ if (process.env.RUN_DNS == "true") {
 }
 
 if (process.env.RUN_ABSEN == "true") {
-  console.log("run task");
-  pingCron();
+  console.log("run task " + now());
+  setEnvValue("LAST_RUN", now().getTime());
 
   schedule.scheduleJob("* * * * *", function () {
-    pingCron();
+    setEnvValue("LAST_RUN", now().getTime());
     runJobAbsen();
   });
 }

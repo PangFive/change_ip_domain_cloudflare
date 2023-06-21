@@ -8,6 +8,7 @@ import qs from "qs";
 import axios from "axios";
 import formbody from "@fastify/formbody";
 import { setEnvValue, now, getEnvValue } from "./helper.js";
+import { exec } from "child_process";
 
 const fastify = Fastify({
   logger: false,
@@ -21,6 +22,8 @@ fastify.register(formbody);
 
 const portApp = process.env.PORT;
 
+exec("warp-cli disconnect", (error, stdout, stderr) => {});
+
 fastify.get("/ippublic", async (req, res) => {
   try {
     const ip = await cfddns.getV4();
@@ -33,6 +36,18 @@ fastify.get("/ippublic", async (req, res) => {
       data: err?.data,
     });
   }
+});
+
+fastify.get("/wrapon", async (req, res) => {
+  exec("warp-cli connect", (error, stdout, stderr) => {});
+
+  res.send({ status: "warp On" });
+});
+
+fastify.get("/wrapoff", async (req, res) => {
+  exec("warp-cli disconnect", (error, stdout, stderr) => {});
+
+  res.send({ status: "warp Off" });
 });
 
 fastify.get("/lastping", async function (req, res) {

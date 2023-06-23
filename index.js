@@ -26,9 +26,15 @@ exec("warp-cli disconnect", (error, stdout, stderr) => {});
 
 fastify.get("/ippublic", async (req, res) => {
   try {
-    const ip = await cfddns.getV4();
-
-    res.send({ ip: ip });
+    await axios
+      .get("https://www.cloudflare.com/cdn-cgi/trace/")
+      .then(function (response) {
+        let data = response.data.split("\n");
+        res.send({ ...data });
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   } catch (err) {
     res.send({
       status: "error",

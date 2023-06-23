@@ -243,6 +243,7 @@ if (process.env.RUN_ABSEN == "true") {
   console.log("run task " + now());
   setEnvValue("LAST_RUN", now().getTime());
 
+  runJobAbsen();
   schedule.scheduleJob("* * * * *", function () {
     setEnvValue("LAST_RUN", now().getTime());
     runJobAbsen();

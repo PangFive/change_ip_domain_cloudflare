@@ -382,7 +382,9 @@ const runJobAbsen = async () => {
       if (
         adjustTimeZone(now().setSeconds(0, 0)) >= new Date(jobData.waktu_absen)
       ) {
-        startJobAbsen(jobData, isDatang, isPulang);
+        if (process.env.DEBUG != "true") {
+          startJobAbsen(jobData, isDatang, isPulang);
+        }
       }
     });
   }

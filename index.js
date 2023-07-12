@@ -256,6 +256,10 @@ if (process.env.RUN_ABSEN == "true") {
   });
 }
 
+if (process.env.WARP == "true") {
+  exec("warp-cli connect", (error, stdout, stderr) => {});
+}
+
 // Run the server!
 fastify.listen({ port: portApp }, function (err, address) {
   console.log("jalan port " + portApp);

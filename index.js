@@ -249,10 +249,24 @@ if (process.env.RUN_ABSEN == "true") {
   console.log("run task " + now());
   setEnvValue("LAST_RUN", now().getTime());
 
-  runJobAbsen();
+  if (process.env.DELAY_ABSEN == "true") {
+    setTimeout(function () {
+      runJobAbsen();
+    }, 10000);
+  } else {
+    runJobAbsen();
+  }
+
   schedule.scheduleJob("* * * * *", function () {
     setEnvValue("LAST_RUN", now().getTime());
-    runJobAbsen();
+
+    if (process.env.DELAY_ABSEN == "true") {
+      setTimeout(function () {
+        runJobAbsen();
+      }, 10000);
+    } else {
+      runJobAbsen();
+    }
   });
 }
 

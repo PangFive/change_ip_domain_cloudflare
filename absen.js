@@ -327,8 +327,10 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
           }
         })
         .catch((err) => {
-          if (err.response.status != 401) {
-            updateStatusJob(jobId, 2);
+          if (!isDatang && !isPulang) {
+            if (err.response.status != 401) {
+              updateStatusJob(jobId, 2);
+            }
           }
         });
     }

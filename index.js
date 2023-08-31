@@ -248,11 +248,12 @@ if (process.env.RUN_DNS == "true") {
 if (process.env.RUN_ABSEN == "true") {
   console.log("run task " + now());
   setEnvValue("LAST_RUN", now().getTime());
+  const timeDelay = Number(process.env.TIME_DELAY_ABSEN);
 
   if (process.env.DELAY_ABSEN == "true") {
     setTimeout(function () {
       runJobAbsen();
-    }, 10000);
+    }, timeDelay);
   } else {
     runJobAbsen();
   }
@@ -263,7 +264,7 @@ if (process.env.RUN_ABSEN == "true") {
     if (process.env.DELAY_ABSEN == "true") {
       setTimeout(function () {
         runJobAbsen();
-      }, 10000);
+      }, timeDelay);
     } else {
       runJobAbsen();
     }

@@ -137,7 +137,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
 
   const checkAUth = async () => {
     return await axios
-      .get(`https://map.bpkp.go.id/api/v3/kinerja/aktivitas?api_token=${token}`)
+      .get(`https://map.bpkp.go.id/api/v6/presensi/mode?api_token=${token}`)
       .then((response) => {
         return true;
       })

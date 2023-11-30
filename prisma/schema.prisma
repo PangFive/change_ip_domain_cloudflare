@@ -4,9 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model absen_autos {
@@ -80,6 +80,7 @@ model migrations {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model password_resets {
   email      String    @db.VarChar(255)
   token      String    @db.VarChar(255)
@@ -132,6 +133,7 @@ model users {
   username_map      String?       @db.VarChar(255)
   password_map      String?       @db.VarChar(255)
   imei              String?       @db.VarChar(255)
+  tokenmap          String?       @db.VarChar(255)
   created_at        DateTime?     @db.Timestamp(0)
   updated_at        DateTime?     @db.Timestamp(0)
   absen_autos       absen_autos[]

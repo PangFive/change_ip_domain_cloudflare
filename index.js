@@ -91,12 +91,17 @@ fastify.get("/cors", async function (req, res) {
 
   try {
     await axios.get(url, config).then((response) => {
+      if (response.data == "tidak memiliki otoritas") {
+        const error = new Error("tidak memiliki otoritas");
+        error.response = {status: 401};
+        throw error;
+      }
       res.statusCode = response.status;
       let data = response.data;
       res.send({ ...data });
     });
   } catch (err) {
-    res.statusCode = err.response.status;
+    res.statusCode = err.response?.status;
     res.send({
       status: "error",
       message: err.message,

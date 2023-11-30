@@ -47,6 +47,7 @@ const getJobAbsen = async (timeStart, timeEnd) => {
             password_map: true,
             niplama: true,
             imei: true,
+            tokenmap: true,
           },
         },
       },
@@ -118,49 +119,56 @@ const getToken = async (username, password, kelas_user = 0) => {
 };
 
 const startJobAbsen = async (jobData, isDatang, isPulang) => {
-  const jobId = jobData.id;
   const username = jobData?.user.username_map;
   const password = jobData?.user.password_map;
   const niplama = jobData?.user.niplama;
   const id_user = jobData?.user.id;
   const nama = jobData?.user.nama;
-  const lat = jobData?.lat;
-  const long = jobData?.long;
-  const timeZone =
-    jobData.zona_waktu == "WIB" ? 7 : jobData.zona_waktu == "WITA" ? 8 : 9;
   const imei = jobData?.user.imei;
+  let token = jobData?.user.tokenmap;
+  
+  const jobId = jobData.id;
+  const long = jobData?.long;
+  const lat = jobData?.lat;
+  const timeZone = jobData.zona_waktu == "WIB" ? 7 : jobData.zona_waktu == "WITA" ? 8 : 9;
   const waktu_absen = jobData?.waktu_absen;
+
   const wfh = false;
   const mode = 0;
-  let token = jobData?.token;
   let validToAbsen = true;
 
   const checkAUth = async () => {
-    return await axios
-      .get(`https://map.bpkp.go.id/api/v6/presensi/mode?api_token=${token}`)
-      .then((response) => {
-        return true;
-      })
-      .catch((err) => {
-        if (err.response.status == 401) {
-          return getToken(username, password)
-            .then((response) => {
-              // save new  token
-              token = response.data.api_token;
-
-              if (response.status == 200) {
-                return true;
-              } else {
-                return false;
-              }
-            })
-            .catch((err) => {
+    try {
+      return await axios
+        .get(`https://map.bpkp.go.id/api/v6/presensi/mode?api_token=${token}`)
+        .then((response) => {
+          if (response.data == "tidak memiliki otoritas") {
+            const error = new Error("tidak memiliki otoritas");
+            error.response = {status: 401};
+            throw error;
+          }
+          return true
+        })
+    } catch (err) {
+      if (err.response.status == 401) {
+        return getToken(username, password)
+          .then((response) => {
+            // save new  token
+            token = response.data.api_token;
+  
+            if (response.status == 200 && response.data != "tidak memiliki otoritas") {
+              return true;
+            } else {
               return false;
-            });
-        } else {
-          return false;
-        }
-      });
+            }
+          })
+          .catch((err) => {
+            return false;
+          });
+      } else {
+        return false;
+      }
+    }
   };
 
   if (await checkAUth()) {

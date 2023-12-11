@@ -126,11 +126,12 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
   const nama = jobData?.user.nama;
   const imei = jobData?.user.imei;
   let token = jobData?.user.tokenmap;
-  
+
   const jobId = jobData.id;
   const long = jobData?.long;
   const lat = jobData?.lat;
-  const timeZone = jobData.zona_waktu == "WIB" ? 7 : jobData.zona_waktu == "WITA" ? 8 : 9;
+  const timeZone =
+    jobData.zona_waktu == "WIB" ? 7 : jobData.zona_waktu == "WITA" ? 8 : 9;
   const waktu_absen = jobData?.waktu_absen;
 
   const wfh = false;
@@ -144,19 +145,22 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
         .then((response) => {
           if (response.data == "tidak memiliki otoritas") {
             const error = new Error("tidak memiliki otoritas");
-            error.response = {status: 401};
+            error.response = { status: 401 };
             throw error;
           }
-          return true
-        })
+          return true;
+        });
     } catch (err) {
       if (err.response.status == 401) {
         return getToken(username, password)
           .then((response) => {
             // save new  token
             token = response.data.api_token;
-  
-            if (response.status == 200 && response.data != "tidak memiliki otoritas") {
+
+            if (
+              response.status == 200 &&
+              response.data != "tidak memiliki otoritas"
+            ) {
               return true;
             } else {
               return false;

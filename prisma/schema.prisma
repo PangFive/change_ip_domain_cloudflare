@@ -134,6 +134,7 @@ model users {
   password_map      String?       @db.VarChar(255)
   imei              String?       @db.VarChar(255)
   tokenmap          String?       @db.VarChar(255)
+  tokensmile        String?       @db.VarChar(255)
   created_at        DateTime?     @db.Timestamp(0)
   updated_at        DateTime?     @db.Timestamp(0)
   absen_autos       absen_autos[]

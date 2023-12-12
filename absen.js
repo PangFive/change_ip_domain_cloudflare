@@ -312,6 +312,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
         is_tampered_timezone: false,
         mode_presensi: mode,
         sumber: 1,
+        point_of_interest: "Nama lokasi tidak ditemukan",
       };
 
       const config = {

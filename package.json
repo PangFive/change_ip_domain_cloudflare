@@ -13,6 +13,7 @@
   "dependencies": {
     "@fastify/cors": "^8.2.0",
     "@fastify/formbody": "^7.4.0",
+    "@fastify/http-proxy": "^9.3.0",
     "@prisma/client": "^5.7.0",
     "axios": "^0.27.2",
     "dotenv": "^16.0.2",

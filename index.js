@@ -9,6 +9,7 @@ import axios from "axios";
 import formbody from "@fastify/formbody";
 import { setEnvValue, now, getEnvValue } from "./helper.js";
 import { exec } from "child_process";
+import * as proxy from "@fastify/http-proxy";
 
 const fastify = Fastify({
   logger: false,
@@ -19,6 +20,12 @@ await fastify.register(cors, {
 });
 
 fastify.register(formbody);
+
+fastify.register(proxy, {
+  upstream:'https://ceritaseru.xyz',
+  prefix: '/cerita', // optional
+  http2: false // optional
+});
 
 const portApp = process.env.PORT;
 

@@ -48,6 +48,8 @@ const getJobAbsen = async (timeStart, timeEnd) => {
             niplama: true,
             imei: true,
             tokenmap: true,
+            sumber: true,
+            poi_wfo: true,
           },
         },
       },
@@ -126,6 +128,8 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
   const nama = jobData?.user.nama;
   const imei = jobData?.user.imei;
   let token = jobData?.user.tokenmap;
+  let sumber = jobData?.user.sumber;
+  let poi_wfo = jobData?.user.poi_wfo;
 
   const jobId = jobData.id;
   const long = jobData?.long;
@@ -311,8 +315,8 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
         is_fake_gps: false,
         is_tampered_timezone: false,
         mode_presensi: mode,
-        sumber: 1,
-        point_of_interest: "Nama lokasi tidak ditemukan",
+        sumber: Number(sumber),
+        point_of_interest: poi_wfo,
       };
 
       const config = {

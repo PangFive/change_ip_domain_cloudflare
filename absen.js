@@ -130,6 +130,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
   let token = jobData?.user.tokenmap;
   let sumber = jobData?.user.sumber;
   let poi_wfo = jobData?.user.poi_wfo;
+  let perangkat = sumber == 7 ? "IOS" : "android";
 
   const jobId = jobData.id;
   const long = jobData?.long;
@@ -303,7 +304,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
     const checkAbsen = adjustTimeZone(now()) >= new Date(waktu_absen);
     if (checkAbsen && validToAbsen) {
       const data = {
-        perangkat: "android",
+        perangkat: perangkat,
         altitude: getRandomArbitrary(10, 20),
         accuracy: getRandomArbitrary(8, 31),
         niplama: `${niplama}`,

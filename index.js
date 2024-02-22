@@ -68,9 +68,7 @@ fastify.get("/cors", async function (req, res) {
   }
 
   let config = {
-    headers: {
-      "User-Agent": "okhttp/3.14.9",
-    },
+    headers: {},
   };
 
   if (req.headers["content-type"] != undefined) {
@@ -89,11 +87,19 @@ fastify.get("/cors", async function (req, res) {
     config.headers["x-api-key"] = req.headers["x-api-key"];
   }
 
+  if (req.headers["x-user-agent"] != undefined) {
+    config.headers["User-Agent"] = req.headers["x-user-agent"];
+  }
+
+  if (req.headers["x-host"] != undefined) {
+    config.headers["Host"] = req.headers["x-host"];
+  }
+
   try {
     await axios.get(url, config).then((response) => {
       if (response.data == "tidak memiliki otoritas") {
         const error = new Error("tidak memiliki otoritas");
-        error.response = {status: 401};
+        error.response = { status: 401 };
         throw error;
       }
       res.statusCode = response.status;
@@ -118,9 +124,7 @@ fastify.post("/cors", async (req, res) => {
   let body = req.body;
 
   let config = {
-    headers: {
-      "User-Agent": "okhttp/3.14.9",
-    },
+    headers: {},
   };
 
   if (req.headers["content-type"] != undefined) {
@@ -138,6 +142,14 @@ fastify.post("/cors", async (req, res) => {
 
   if (config.headers["Content-Type"].includes("x-www-form-urlencoded")) {
     body = qs.stringify(body);
+  }
+
+  if (req.headers["x-user-agent"] != undefined) {
+    config.headers["User-Agent"] = req.headers["x-user-agent"];
+  }
+
+  if (req.headers["x-host"] != undefined) {
+    config.headers["Host"] = req.headers["x-host"];
   }
 
   try {
@@ -163,9 +175,7 @@ fastify.put("/cors", async (req, res) => {
   }
 
   let config = {
-    headers: {
-      "User-Agent": "okhttp/3.14.9",
-    },
+    headers: {},
   };
 
   if (req.headers["content-type"] != undefined) {
@@ -179,6 +189,14 @@ fastify.put("/cors", async (req, res) => {
 
   if (req.headers["x-client-id"] != undefined) {
     config.headers["x-client-id"] = req.headers["x-client-id"];
+  }
+
+  if (req.headers["x-user-agent"] != undefined) {
+    config.headers["User-Agent"] = req.headers["x-user-agent"];
+  }
+
+  if (req.headers["x-host"] != undefined) {
+    config.headers["Host"] = req.headers["x-host"];
   }
 
   try {

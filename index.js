@@ -7,7 +7,13 @@ import "dotenv/config";
 import qs from "qs";
 import axios from "axios";
 import formbody from "@fastify/formbody";
-import { setEnvValue, now, getEnvValue } from "./helper.js";
+import {
+  setEnvValue,
+  now,
+  getEnvValue,
+  convertCookie,
+  getJsonData,
+} from "./helper.js";
 import { exec } from "child_process";
 
 const fastify = Fastify({
@@ -108,6 +114,76 @@ fastify.get("/cors", async function (req, res) {
     });
   } catch (err) {
     res.statusCode = err.response?.status;
+    res.send({
+      status: "error",
+      message: err.message,
+      data: err?.data,
+    });
+  }
+});
+
+fastify.post("/cors/presensi", async (req, res) => {
+  let url = decodeURIComponent(qs.stringify(req.query));
+  if (!url.includes("?") && url.slice(-1) == "=") {
+    url = url.replace("=", "");
+  }
+  let body = req.body;
+
+  let config = {
+    headers: {
+      "X-Requested-With": "com.eshabe.simpegbatam",
+    },
+    maxRedirects: 0,
+  };
+
+  if (req.headers["content-type"] != undefined) {
+    config.headers["Accept"] = req.headers["content-type"];
+    config.headers["Content-Type"] = req.headers["content-type"];
+  }
+
+  if (req.headers["authorization"] != undefined) {
+    config.headers["Authorization"] = req.headers["authorization"];
+  }
+
+  if (req.headers["x-client-id"] != undefined) {
+    config.headers["x-client-id"] = req.headers["x-client-id"];
+  }
+
+  if (config.headers["Content-Type"].includes("x-www-form-urlencoded")) {
+    body = qs.stringify(body);
+  }
+
+  if (req.headers["x-user-agent"] != undefined) {
+    config.headers["User-Agent"] = req.headers["x-user-agent"];
+  }
+
+  if (req.headers["x-host"] != undefined) {
+    config.headers["Host"] = req.headers["x-host"];
+  }
+
+  try {
+    await axios
+      .post(url, body, config)
+      .then((response) => {})
+      .catch(async (error) => {
+        const url = error.response.headers.location;
+        const cookie = convertCookie(error.response.headers["set-cookie"]);
+        const option = {
+          headers: {
+            Cookie: cookie,
+            ...config.headers,
+          },
+        };
+
+        await axios.get(url, option).then(function (response) {
+          const html = response.data;
+          const data = getJsonData(html);
+          res.statusCode = response.status;
+          res.send(data);
+        });
+      });
+  } catch (err) {
+    res.statusCode = err.response.status;
     res.send({
       status: "error",
       message: err.message,

@@ -2,6 +2,7 @@ import fernet from "fernet";
 import "dotenv/config";
 import fs from "fs";
 import os from "os";
+import cheerio from "cheerio";
 
 const now = () => new Date();
 
@@ -133,6 +134,69 @@ const envTime = (time) => {
   return result;
 };
 
+const convertCookie = (array) => {
+  let result = "";
+  const cookieObject = {};
+
+  array.forEach((cookieString) => {
+    const [keyValue, ...options] = cookieString.split(";");
+    const [key, value] = keyValue.split("=");
+    cookieObject[key.trim()] = value.trim();
+    // Handling options if any
+    options.forEach((option) => {
+      const [optionKey, optionValue] = option.trim().split("=");
+      cookieObject[optionKey.trim()] = optionValue ? optionValue.trim() : true;
+    });
+  });
+
+  for (const key in cookieObject) {
+    if (cookieObject.hasOwnProperty(key)) {
+      result += `${key}=${cookieObject[key]}; `;
+    }
+  }
+
+  result = result.slice(0, -2);
+
+  const cookieArray = result.split(";");
+
+  const filteredCookieArray = cookieArray.filter((attribute) => {
+    return (
+      !attribute.includes("path") &&
+      !attribute.includes("HttpOnly") &&
+      !attribute.includes("samesite")
+    );
+  });
+
+  const filteredCookieString = filteredCookieArray.join(";");
+
+  return filteredCookieString;
+};
+
+const getJsonData = (html) => {
+  const $ = cheerio.load(html);
+
+  var table = $("#w1 .table-striped");
+
+  var thead = $(table).find("thead");
+  var tbody = $(table).find("tbody");
+
+  var rows = $(tbody).find("tr");
+  var data = [];
+
+  rows.each((in_daftar, elemen_daftar) => {
+    var cells = $(elemen_daftar).find("td");
+
+    var rowData = {
+      no: $(cells[0]).text().trim(),
+      check_clock: $(cells[1]).text().trim(),
+      mode_presensi: $(cells[2]).text().trim(),
+    };
+
+    data.push(rowData);
+  });
+  return data;
+};
+
 export {
   now,
   dateFormater,
@@ -143,4 +207,6 @@ export {
   getRandomArbitrary,
   setEnvValue,
   getEnvValue,
+  convertCookie,
+  getJsonData,
 };

@@ -101,6 +101,14 @@ fastify.get("/cors", async function (req, res) {
     config.headers["Host"] = req.headers["x-host"];
   }
 
+  if (req.headers["x-referer"] != undefined) {
+    config.headers["Referer"] = req.headers["x-referer"];
+  }
+
+  if (req.headers["x-origin"] != undefined) {
+    config.headers["Origin"] = req.headers["x-origin"];
+  }
+
   try {
     await axios.get(url, config).then((response) => {
       if (response.data == "tidak memiliki otoritas") {
@@ -159,6 +167,14 @@ fastify.post("/cors/presensi", async (req, res) => {
 
   if (req.headers["x-host"] != undefined) {
     config.headers["Host"] = req.headers["x-host"];
+  }
+
+  if (req.headers["x-referer"] != undefined) {
+    config.headers["Referer"] = req.headers["x-referer"];
+  }
+
+  if (req.headers["x-origin"] != undefined) {
+    config.headers["Origin"] = req.headers["x-origin"];
   }
 
   try {
@@ -228,6 +244,14 @@ fastify.post("/cors", async (req, res) => {
     config.headers["Host"] = req.headers["x-host"];
   }
 
+  if (req.headers["x-referer"] != undefined) {
+    config.headers["Referer"] = req.headers["x-referer"];
+  }
+
+  if (req.headers["x-origin"] != undefined) {
+    config.headers["Origin"] = req.headers["x-origin"];
+  }
+
   try {
     await axios.post(url, body, config).then((response) => {
       res.statusCode = response.status;
@@ -273,6 +297,14 @@ fastify.put("/cors", async (req, res) => {
 
   if (req.headers["x-host"] != undefined) {
     config.headers["Host"] = req.headers["x-host"];
+  }
+
+  if (req.headers["x-referer"] != undefined) {
+    config.headers["Referer"] = req.headers["x-referer"];
+  }
+
+  if (req.headers["x-origin"] != undefined) {
+    config.headers["Origin"] = req.headers["x-origin"];
   }
 
   try {

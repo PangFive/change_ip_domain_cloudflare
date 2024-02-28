@@ -249,7 +249,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
       });
 
     if (checkAktivitas) {
-      const data = {
+      let data = {
         nama_aktivitas: `${lastAktivitas.nama_aktivitas}`,
         tanggal_aktivitas: `${dateFormater()}`,
         id_penugasan: Number(lastAktivitas.id_penugasan),
@@ -257,6 +257,10 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
         long: Number(parseFloat(long).toFixed(6)),
         is_lembur: lastAktivitas.is_lembur,
       };
+
+      if (lastAktivitas.jenis_pkpt_pkau != null) {
+        data.jenis_pkpt_pkau = lastAktivitas.jenis_pkpt_pkau;
+      }
 
       const config = {
         headers: {

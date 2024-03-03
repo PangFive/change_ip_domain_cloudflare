@@ -18,6 +18,8 @@ model absen_autos {
   long        String?   @db.VarChar(255)
   token       String?   @db.VarChar(255)
   zona_waktu  String?   @db.VarChar(255)
+  kota        String?   @db.VarChar(255)
+  provinsi    String?   @db.VarChar(255)
   created_at  DateTime? @db.Timestamp(0)
   updated_at  DateTime? @db.Timestamp(0)
   user        users     @relation(fields: [users_id], references: [id])
@@ -69,6 +71,8 @@ model kantors {
   utara         String    @db.VarChar(255)
   key_sort_unit String    @db.VarChar(255)
   zona_waktu    String    @db.VarChar(255)
+  kota          String?   @db.VarChar(255)
+  provinsi      String?   @db.VarChar(255)
   created_at    DateTime? @db.Timestamp(0)
   updated_at    DateTime? @db.Timestamp(0)
 }
@@ -112,9 +116,12 @@ model tokens {
 }
 
 model tools {
-  id     BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
-  tool   String? @db.VarChar(255)
-  status String? @db.VarChar(255)
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  tool       String?   @db.VarChar(255)
+  status     String?   @db.VarChar(255)
+  option     String?   @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
 }
 
 model users {
@@ -133,6 +140,8 @@ model users {
   username_map      String?       @db.VarChar(255)
   password_map      String?       @db.VarChar(255)
   imei              String?       @db.VarChar(255)
+  nonbpkp           Int?
+  deviceinfo        String?       @db.LongText
   sumber            String?       @db.VarChar(255)
   tokenmap          String?       @db.VarChar(255)
   poi_wfo           String?       @db.VarChar(255)

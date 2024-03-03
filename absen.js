@@ -50,6 +50,14 @@ const getJobAbsen = async (timeStart, timeEnd) => {
             tokenmap: true,
             sumber: true,
             poi_wfo: true,
+            kantor: {
+              select: {
+                id: true,
+                kota: true,
+                provinsi: true,
+                zona_waktu: true,
+              },
+            },
           },
         },
       },
@@ -131,6 +139,8 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
   let sumber = jobData?.user.sumber;
   let poi_wfo = jobData?.user.poi_wfo;
   let perangkat = sumber == 7 ? "IOS" : "android";
+  let kota = jobData?.user.kantor.kota;
+  let provinsi = jobData?.user.kantor.provinsi;
 
   const jobId = jobData.id;
   const long = jobData?.long;
@@ -323,6 +333,11 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
         sumber: Number(sumber),
         point_of_interest: poi_wfo,
       };
+
+      if (kota && provinsi) {
+        data.kota = kota;
+        data.provinsi = provinsi;
+      }
 
       const config = {
         headers: {

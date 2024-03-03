@@ -14,7 +14,7 @@
     "@fastify/cors": "^8.2.0",
     "@fastify/formbody": "^7.4.0",
     "@fastify/http-proxy": "^9.3.0",
-    "@prisma/client": "^5.7.0",
+    "@prisma/client": "^5.10.2",
     "axios": "^1.6.7",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.0.2",
@@ -26,6 +26,6 @@
     "qs": "^6.11.0"
   },
   "devDependencies": {
-    "prisma": "^5.7.0"
+    "prisma": "^5.10.2"
   }
 }

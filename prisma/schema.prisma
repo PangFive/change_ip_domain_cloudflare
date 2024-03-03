@@ -18,13 +18,11 @@ model absen_autos {
   long        String?   @db.VarChar(255)
   token       String?   @db.VarChar(255)
   zona_waktu  String?   @db.VarChar(255)
-  kota        String?   @db.VarChar(255)
-  provinsi    String?   @db.VarChar(255)
   created_at  DateTime? @db.Timestamp(0)
   updated_at  DateTime? @db.Timestamp(0)
   user        users     @relation(fields: [users_id], references: [id])
 
-  @@index([users_id], map: "users")
+  @@index([users_id], map: "user")
 }
 
 model access {
@@ -75,6 +73,7 @@ model kantors {
   provinsi      String?   @db.VarChar(255)
   created_at    DateTime? @db.Timestamp(0)
   updated_at    DateTime? @db.Timestamp(0)
+  users         users[]
 }
 
 model migrations {
@@ -148,5 +147,8 @@ model users {
   tokensmile        String?       @db.VarChar(255)
   created_at        DateTime?     @db.Timestamp(0)
   updated_at        DateTime?     @db.Timestamp(0)
+  kantor            kantors       @relation(fields: [id_satker], references: [id])
   absen_autos       absen_autos[]
+
+  @@index([id_satker], map: "id_satker")
 }

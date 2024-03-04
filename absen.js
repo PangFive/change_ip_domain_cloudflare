@@ -332,6 +332,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
         mode_presensi: mode,
         sumber: Number(sumber),
         point_of_interest: poi_wfo,
+        status_menginap: null,
       };
 
       if (kota && provinsi) {

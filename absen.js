@@ -446,7 +446,7 @@ const runJobAbsen = async () => {
         if (process.env.DEBUG != "true") {
           if (jobData.user.nonbpkp == 1 && process.env.ABSEN_SIMPEG == "true") {
             startJobAbsenSimpeg(jobData, isDatang, isPulang);
-          } else if (process.env.ABSEN_SIMPEG == "true") {
+          } else if (process.env.ABSEN_MAP == "true") {
             startJobAbsen(jobData, isDatang, isPulang);
           }
         }

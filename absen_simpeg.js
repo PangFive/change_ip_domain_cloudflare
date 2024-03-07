@@ -150,10 +150,8 @@ const startJobAbsenSimpeg = async (jobData, isDatang, isPulang) => {
           }
         })
         .catch((err) => {
-          if (!isDatang && !isPulang) {
-            if (err.response.status != 502) {
-              updateStatusJob(jobId, 2);
-            }
+          if (err.response.status != 502) {
+            updateStatusJob(jobId, 2);
           }
         });
     }

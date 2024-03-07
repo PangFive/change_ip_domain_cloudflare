@@ -13,6 +13,8 @@ import {
   envTime,
 } from "./helper.js";
 
+import startJobAbsenSimpeg from "./absen_simpeg.js";
+
 const getJobAbsen = async (timeStart, timeEnd) => {
   let prisma;
 
@@ -50,6 +52,8 @@ const getJobAbsen = async (timeStart, timeEnd) => {
             tokenmap: true,
             sumber: true,
             poi_wfo: true,
+            nonbpkp: true,
+            deviceinfo: true,
             kantor: {
               select: {
                 id: true,
@@ -77,6 +81,24 @@ const updateStatusJob = async (id, status) => {
       },
       data: {
         status: status,
+      },
+    });
+    prisma.$disconnect;
+  } catch (err) {
+    prisma.$disconnect;
+  }
+};
+
+const updateToken = async (id, tokenmap) => {
+  const prisma = new PrismaClient();
+
+  try {
+    await prisma.users.update({
+      where: {
+        id: id,
+      },
+      data: {
+        tokenmap: tokenmap,
       },
     });
     prisma.$disconnect;
@@ -171,6 +193,7 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
           .then((response) => {
             // save new  token
             token = response.data.api_token;
+            updateToken(id_user, token);
 
             if (
               response.status == 200 &&
@@ -423,11 +446,15 @@ const runJobAbsen = async () => {
         adjustTimeZone(now().setSeconds(0, 0)) >= new Date(jobData.waktu_absen)
       ) {
         if (process.env.DEBUG != "true") {
-          startJobAbsen(jobData, isDatang, isPulang);
+          if (jobData.user.nonbpkp == 1 && process.env.ABSEN_SIMPEG == "true") {
+            startJobAbsenSimpeg(jobData, isDatang, isPulang);
+          } else if (process.env.ABSEN_SIMPEG == "true") {
+            startJobAbsen(jobData, isDatang, isPulang);
+          }
         }
       }
     });
   }
 };
 
-export { runJobAbsen };
+export { runJobAbsen, updateToken, createLog, updateStatusJob };

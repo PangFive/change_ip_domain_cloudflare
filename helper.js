@@ -24,6 +24,14 @@ const setEnvValue = (key, value) => {
   fs.writeFileSync("./.env", ENV_VARS.join(os.EOL));
 };
 
+const atob = (data) => {
+  return Buffer.from(data, "base64").toString();
+};
+
+const btoa = (data) => {
+  return Buffer.from(data).toString("base64");
+};
+
 const getEnvValue = (key) => {
   const ENV_VARS = fs.readFileSync("./.env", "utf8").split(os.EOL);
 
@@ -197,6 +205,37 @@ const getJsonData = (html) => {
   return data;
 };
 
+function json2string(jsonObject) {
+  // Initialize an empty string to store the reconstructed data
+  let reconstructedString = "";
+
+  // Iterate over each key-value pair in the JSON object and concatenate them into a string
+  Object.keys(jsonObject).forEach((key) => {
+    reconstructedString += `${key}:${jsonObject[key]}|`;
+  });
+
+  // Remove the trailing '|' character
+  reconstructedString = reconstructedString.slice(0, -1);
+
+  return reconstructedString;
+}
+
+function string2json(dataString) {
+  // Split the string into an array of key-value pairs
+  const keyValuePairs = dataString.split("|");
+
+  // Initialize an empty object to store key-value pairs
+  const jsonObject = {};
+
+  // Iterate over each key-value pair and construct the JSON object
+  keyValuePairs.forEach((pair) => {
+    const [key, value] = pair.split(":"); // Split each pair into key and value
+    jsonObject[key] = value; // Add key-value pair to the JSON object
+  });
+
+  return jsonObject;
+}
+
 export {
   now,
   dateFormater,
@@ -209,4 +248,8 @@ export {
   getEnvValue,
   convertCookie,
   getJsonData,
+  atob,
+  btoa,
+  string2json,
+  json2string,
 };

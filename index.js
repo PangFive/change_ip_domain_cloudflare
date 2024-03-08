@@ -208,6 +208,29 @@ fastify.post("/cors/presensi", async (req, res) => {
   }
 });
 
+fastify.get("/cors/lokasi", async (req, res) => {
+  const url = `https://www.google.com/search?tbm=map&hl=id&gl=id&q=${req.query["lat"]},${req.query["long"]}`;
+
+  try {
+    await axios.get(url).then(function (response) {
+      let data = response.data;
+      data = JSON.parse(data.replace(`)]}'`, ""));
+      const alamat = data[0][1][0][14][183][2][2][0].split(",");
+      const kota = alamat[1].trim();
+      const provinsi = alamat[2].trim();
+      res.statusCode = response.status;
+      res.send({ kota, provinsi });
+    });
+  } catch (err) {
+    res.statusCode = err.response.status;
+    res.send({
+      status: "error",
+      message: err.message,
+      data: err?.data,
+    });
+  }
+});
+
 fastify.post("/cors", async (req, res) => {
   let url = decodeURIComponent(qs.stringify(req.query));
   if (!url.includes("?") && url.slice(-1) == "=") {

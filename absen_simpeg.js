@@ -133,27 +133,39 @@ const startJobAbsenSimpeg = async (jobData, isDatang, isPulang) => {
         },
       };
 
-      await axios
-        .post(
-          "https://simpeg.batam.go.id/wdms/position/create",
-          qs.stringify(data),
-          config
-        )
-        .then((response) => {
-          if (!response.data.error) {
-            updateStatusJob(jobId, 1);
-            createLog(
-              `absen ${isDatang ? "datang" : "pulang"} otomatis`,
-              id_user,
-              nama
-            );
-          }
-        })
-        .catch((err) => {
-          if (err.response.status != 502) {
-            updateStatusJob(jobId, 2);
-          }
-        });
+      async function runAbsen(runUlang = true) {
+        await axios
+          .post(
+            "https://simpeg.batam.go.id/wdms/position/create",
+            qs.stringify(data),
+            config
+          )
+          .then((response) => {
+            if (!response.data.error) {
+              updateStatusJob(jobId, 1);
+              createLog(
+                `absen ${isDatang ? "datang" : "pulang"} otomatis`,
+                id_user,
+                nama
+              );
+            } else if (
+              response.data.message
+                .toLowerCase()
+                .includes("perangkat yang digunakan sebelumnya bukan ini") &&
+              runUlang
+            ) {
+              data["position[device_id]"] = deviceInfo.SN;
+              runAbsen(false);
+            }
+          })
+          .catch((err) => {
+            if (err.response.status != 502) {
+              updateStatusJob(jobId, 2);
+            }
+          });
+      }
+
+      await runAbsen();
     }
 
     ////////// End Absen ///////////

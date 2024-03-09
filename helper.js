@@ -229,7 +229,14 @@ function string2json(dataString) {
 
   // Iterate over each key-value pair and construct the JSON object
   keyValuePairs.forEach((pair) => {
-    const [key, value] = pair.split(":"); // Split each pair into key and value
+    const data = pair.split(":");
+    const key = data.shift();
+    let value;
+    if (data.length > 1) {
+      value = data.join(":"); // Split each pair into key and value
+    } else {
+      value = data; // Split each pair into key and value
+    }
     jsonObject[key] = value; // Add key-value pair to the JSON object
   });
 

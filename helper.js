@@ -235,7 +235,7 @@ function string2json(dataString) {
     if (data.length > 1) {
       value = data.join(":"); // Split each pair into key and value
     } else {
-      value = data; // Split each pair into key and value
+      value = data.join(); // Split each pair into key and value
     }
     jsonObject[key] = value; // Add key-value pair to the JSON object
   });

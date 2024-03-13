@@ -212,14 +212,31 @@ fastify.get("/cors/lokasi", async (req, res) => {
   const url = `https://www.google.com/search?tbm=map&hl=id&gl=id&q=${req.query["lat"]},${req.query["long"]}`;
 
   try {
-    await axios.get(url).then(function (response) {
+    await axios.get(url).then(async function (response) {
       let data = response.data;
       data = JSON.parse(data.replace(`)]}'`, ""));
       const alamat = data[0][1][0][14][183][2][2][0].split(",");
       const kota = alamat[1].trim();
       const provinsi = alamat[2].trim();
+      let timezone = null;
+      let isTimeZone = false;
+
+      if (req.query.gmt == "true") {
+        isTimeZone = true;
+      }
+
+      if (isTimeZone) {
+        const urlTz = `https://www.google.com/search?tbm=map&hl=id&gl=id&q=${provinsi}`;
+        await axios.get(urlTz).then((response) => {
+          let data = response.data;
+          data = JSON.parse(data.replace(`)]}'`, ""));
+          const gmt = data[0][5][1][0][1][0];
+          timezone = gmt == "WIB" ? 7 : gmt == "WITA" ? 8 : 9;
+        });
+      }
+
       res.statusCode = response.status;
-      res.send({ kota, provinsi });
+      res.send({ kota, provinsi, timezone });
     });
   } catch (err) {
     res.statusCode = err.response.status;

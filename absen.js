@@ -216,43 +216,43 @@ const startJobAbsen = async (jobData, isDatang, isPulang) => {
   if (await checkAUth()) {
     ////////// Kesehatan ///////////
 
-    const checkKesehatan = await axios
-      .get(
-        `https://map.bpkp.go.id/api/v3/covid/${niplama}?api_token=${token}&today=true`
-      )
-      .then((response) => {
-        if (response.data.result == null) {
-          return true;
-        } else {
-          return false;
-        }
-      })
-      .catch((err) => {
-        return false;
-      });
+    // const checkKesehatan = await axios
+    //   .get(
+    //     `https://map.bpkp.go.id/api/v3/covid/${niplama}?api_token=${token}&today=true`
+    //   )
+    //   .then((response) => {
+    //     if (response.data.result == null) {
+    //       return true;
+    //     } else {
+    //       return false;
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     return false;
+    //   });
 
-    if (checkKesehatan) {
-      const data = {
-        gejala: [1],
-        komorbid: [],
-        niplama: niplama,
-        status: 1,
-      };
+    // if (checkKesehatan) {
+    //   const data = {
+    //     gejala: [1],
+    //     komorbid: [],
+    //     niplama: niplama,
+    //     status: 1,
+    //   };
 
-      const config = {
-        headers: {
-          "User-Agent": "okhttp/3.14.9",
-          "x-client-id": "map_mobile",
-          "Content-Type": "application/json",
-        },
-      };
+    //   const config = {
+    //     headers: {
+    //       "User-Agent": "okhttp/3.14.9",
+    //       "x-client-id": "map_mobile",
+    //       "Content-Type": "application/json",
+    //     },
+    //   };
 
-      await axios.post(
-        `https://map.bpkp.go.id/api/v3/covid?api_token=${token}`,
-        data,
-        config
-      );
-    }
+    //   await axios.post(
+    //     `https://map.bpkp.go.id/api/v3/covid?api_token=${token}`,
+    //     data,
+    //     config
+    //   );
+    // }
 
     ////////// End Kesehatan ///////////
 

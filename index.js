@@ -16,6 +16,8 @@ import {
 } from "./helper.js";
 import { exec } from "child_process";
 
+let visitors = 0;
+
 const fastify = Fastify({
   logger: false,
 });
@@ -35,8 +37,13 @@ fastify.get("/ippublic", async (req, res) => {
     await axios
       .get("https://www.cloudflare.com/cdn-cgi/trace/")
       .then(function (response) {
-        let data = response.data.split("\n");
-        res.send({ ...data });
+        let raw = response.data.split("\n");
+        let data = {};
+        for (const line of raw) {
+          const [key, value] = line.split("=");
+          data[key] = value;
+        }
+        res.send({ ...data, visitors: visitors });
       })
       .catch(function (error) {
         console.error(error);
@@ -48,6 +55,11 @@ fastify.get("/ippublic", async (req, res) => {
       data: err?.data,
     });
   }
+});
+
+fastify.get("/ippublic/count", async (req, res) => {
+  visitors++;
+  res.send({ visitors: visitors });
 });
 
 fastify.get("/wrapon", async (req, res) => {

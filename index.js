@@ -194,7 +194,7 @@ fastify.post("/cors/presensi", async (req, res) => {
       .post(url, body, config)
       .then((response) => {})
       .catch(async (error) => {
-        const url = error.response.headers.location;
+        const url = error.response.headers.location || "https://simpeg.batam.go.id/wdms";
         const cookie = convertCookie(error.response.headers["set-cookie"]);
         const option = {
           headers: {

@@ -243,7 +243,47 @@ function string2json(dataString) {
   return jsonObject;
 }
 
+function convertTimezone(latitude, longitude) {
+  // Konversi latitude dan longitude menjadi DMS
+  const latDirection = latitude < 0 ? 'S' : 'N';
+  const lonDirection = longitude < 0 ? 'W' : 'E';
+
+  const latAbs = Math.abs(latitude);
+  const lonAbs = Math.abs(longitude);
+
+  const latDegrees = Math.floor(latAbs);
+  const lonDegrees = Math.floor(lonAbs);
+
+  const latMinutes = Math.floor((latAbs - latDegrees) * 60);
+  const lonMinutes = Math.floor((lonAbs - lonDegrees) * 60);
+
+  const latSeconds = ((latAbs - latDegrees - latMinutes / 60) * 3600).toFixed(1);
+  const lonSeconds = ((lonAbs - lonDegrees - lonMinutes / 60) * 3600).toFixed(1);
+
+  const latDMS = `${latDegrees}°${latMinutes}'${latSeconds}"${latDirection}`;
+  const lonDMS = `${lonDegrees}°${lonMinutes}'${lonSeconds}"${lonDirection}`;
+
+  // Tentukan zona waktu (diperbaiki)
+  let timezone = 7;
+  if (longitude >= 95 && longitude < 115) { 
+    timezone = 7;
+  } else if (longitude >= 115 && longitude < 135) { 
+    timezone = 8;
+  } else if (longitude >= 135 && longitude < 141) { 
+    timezone = 9;
+  } else {
+    timezone = 7; 
+  }
+
+  return {
+    latitudeDMS: latDMS,
+    longitudeDMS: lonDMS,
+    timezone: timezone,
+  };
+}
+
 export {
+  convertTimezone,
   now,
   dateFormater,
   getBearerToken,

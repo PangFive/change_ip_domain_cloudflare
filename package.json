@@ -16,6 +16,7 @@
     "@fastify/http-proxy": "^9.5.0",
     "@prisma/client": "^5.17.0",
     "axios": "^1.7.2",
+    "change_dns": "file:",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.0.2",
     "fastify": "^4.28.1",

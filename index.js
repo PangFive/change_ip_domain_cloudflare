@@ -13,6 +13,7 @@ import {
   getEnvValue,
   convertCookie,
   getJsonData,
+  convertTimezone
 } from "./helper.js";
 import { exec } from "child_process";
 
@@ -238,13 +239,7 @@ fastify.get("/cors/lokasi", async (req, res) => {
       }
 
       if (isTimeZone) {
-        const urlTz = `https://www.google.com/search?tbm=map&hl=id&gl=id&q=${provinsi}`;
-        await axios.get(urlTz).then((response) => {
-          let data = response.data;
-          data = JSON.parse(data.replace(`)]}'`, ""));
-          const gmt = data[0][5][1][0][1][0];
-          timezone = gmt == "WIB" ? 7 : gmt == "WITA" ? 8 : 9;
-        });
+        timezone = convertTimezone(req.query["lat"],req.query["long"]).timezone;
       }
 
       res.statusCode = response.status;

@@ -125,7 +125,6 @@ fastify.get("/cors", async function (req, res) {
 
   try {
     await axios.get(url, config).then((response) => {
-      console.log(response)
       if (response.data == "tidak memiliki otoritas") {
         const error = new Error("tidak memiliki otoritas");
         error.response = { status: 401 };

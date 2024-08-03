@@ -86,7 +86,9 @@ fastify.get("/cors", async function (req, res) {
   }
 
   let config = {
-    headers: {},
+    headers: {
+      Connection : "Keep-Alive"
+    },
   };
 
   if (req.headers["content-type"] != undefined) {
@@ -123,6 +125,7 @@ fastify.get("/cors", async function (req, res) {
 
   try {
     await axios.get(url, config).then((response) => {
+      console.log(response)
       if (response.data == "tidak memiliki otoritas") {
         const error = new Error("tidak memiliki otoritas");
         error.response = { status: 401 };

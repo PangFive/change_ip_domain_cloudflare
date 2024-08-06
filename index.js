@@ -154,6 +154,7 @@ fastify.post("/cors/presensi", async (req, res) => {
   let config = {
     headers: {
       "X-Requested-With": "com.eshabe.simpegbatam",
+      Connection : "Keep-Alive"
     },
     maxRedirects: 0,
   };

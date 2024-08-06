@@ -130,14 +130,18 @@ fastify.get("/cors", async function (req, res) {
         error.response = { status: 401 };
         throw error;
       }
-      console.log("Sukses", response.status)
+      if (url.includes("simpeg.batam.go.id")) {
+        console.log("Sukses", response.status)
+      }
       res.statusCode = response.status;
       let data = response.data;
       res.send({ ...data });
     });
   } catch (err) {
     res.statusCode = err.response?.status;
-    console.log(err.response.status)
+    if (url.includes("simpeg.batam.go.id")) {
+      console.log(err.response.status)
+    }
     res.send({
       status: "error",
       message: err.message,
@@ -209,7 +213,9 @@ fastify.post("/cors/presensi", async (req, res) => {
         };
 
         await axios.get(url, option).then(function (response) {
-          console.log("Sukses", response.status)
+          if (url.includes("simpeg.batam.go.id")) {
+            console.log("Sukses Presensi", response.status)
+          }
           const html = response.data;
           const data = getJsonData(html);
           res.statusCode = response.status;
@@ -218,7 +224,9 @@ fastify.post("/cors/presensi", async (req, res) => {
       });
   } catch (err) {
     res.statusCode = err.response.status;
-    console.log(err.response.status)
+    if (url.includes("simpeg.batam.go.id")) {
+      console.log(err.response.status)
+    }
     res.send({
       status: "error",
       message: err.message,
